@@ -43,6 +43,7 @@ export const Route = createFileRoute('/')({
 function Home() {
   const [jobOpen, setJobOpen] = useState(false)
   const [selectedService, setSelectedService] = useState('Plumbing')
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
     <main className="min-h-dvh overflow-hidden bg-background text-foreground">
@@ -60,9 +61,10 @@ function Home() {
           <div className="flex items-center gap-2">
             <Button variant="ghost" className="hidden text-sm sm:inline-flex">Log in</Button>
             <Button onClick={() => setJobOpen(true)} className="rounded-full bg-primary px-5 shadow-md transition-transform hover:scale-[1.03] active:scale-[0.98]">Post a job <ArrowRight className="size-4" /></Button>
-            <Button variant="ghost" size="icon" className="md:hidden" aria-label="Open menu"><Menu className="size-5" /></Button>
+            <Button variant="ghost" size="icon" className="md:hidden" aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'} onClick={() => setMobileMenuOpen((open) => !open)}><Menu className="size-5" /></Button>
           </div>
         </header>
+        {mobileMenuOpen && <nav className="flex flex-col gap-1 border-b border-border py-3 text-sm font-semibold text-primary md:hidden" aria-label="Mobile navigation"><a href="#services" onClick={() => setMobileMenuOpen(false)} className="rounded-lg px-3 py-2 hover:bg-muted">Services</a><a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="rounded-lg px-3 py-2 hover:bg-muted">How it works</a><a href="#trust" onClick={() => setMobileMenuOpen(false)} className="rounded-lg px-3 py-2 hover:bg-muted">Why FixNow</a></nav>}
 
         <section className="relative grid gap-12 pb-20 pt-14 sm:pt-20 lg:grid-cols-[1.02fr_.98fr] lg:items-center lg:gap-20 lg:pb-28 lg:pt-24">
           <div className="relative z-10 max-w-2xl">
@@ -99,9 +101,9 @@ function Home() {
                 <div className="my-5 h-px bg-border" />
                 <div className="flex items-center justify-between text-xs text-muted-foreground"><span className="flex items-center gap-1.5"><Bell className="size-3.5 text-accent" /> 3 verified quotes</span><span className="font-semibold text-foreground">R500 – R1,000</span></div>
                 <div className="mt-4 space-y-2.5">
-                  <QuoteMini name="Mike's Plumbing" rating="4.9" price="R750" time="35 min" initials="MP" featured />
-                  <QuoteMini name="ABC Plumbing" rating="4.6" price="R520" time="1 hr 20" initials="AB" />
-                  <QuoteMini name="Emergency SA" rating="4.8" price="R900" time="18 min" initials="ES" />
+                  <QuoteMini name="Mike's Plumbing" rating="4.9" price="R750" time="35 min" initials="MP" availability="Available now" featured />
+                  <QuoteMini name="ABC Plumbing" rating="4.6" price="R520" time="1 hr 20" initials="AB" availability="Available today" />
+                  <QuoteMini name="Emergency SA" rating="4.8" price="R900" time="18 min" initials="ES" availability="Available now" />
                 </div>
                 <Button className="mt-5 w-full rounded-xl bg-primary text-primary-foreground">Compare quotes <SlidersHorizontal className="size-4" /></Button>
               </div>
@@ -127,8 +129,8 @@ function Home() {
   )
 }
 
-function QuoteMini({ name, rating, price, time, initials, featured = false }: { name: string; rating: string; price: string; time: string; initials: string; featured?: boolean }) {
-  return <div className={`flex items-center gap-2.5 rounded-xl border p-2.5 ${featured ? 'border-accent/50 bg-accent/10' : 'border-border bg-background'}`}><span className="flex size-9 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">{initials}</span><div className="min-w-0 flex-1"><div className="flex items-center gap-1 text-xs font-bold text-primary"><span className="truncate">{name}</span>{featured && <BadgeCheck className="size-3 shrink-0 text-emerald-700" />}</div><div className="mt-0.5 flex items-center gap-2 text-[10px] text-muted-foreground"><span className="flex items-center gap-0.5 text-accent-foreground"><Star className="size-3 fill-current" /> {rating}</span><span>· {time} arrival</span></div></div><span className="text-xs font-bold text-primary">{price}</span></div>
+function QuoteMini({ name, rating, price, time, initials, availability, featured = false }: { name: string; rating: string; price: string; time: string; initials: string; availability: string; featured?: boolean }) {
+  return <div className={`flex items-center gap-2.5 rounded-xl border p-2.5 ${featured ? 'border-accent/50 bg-accent/10' : 'border-border bg-background'}`}><span className="flex size-9 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">{initials}</span><div className="min-w-0 flex-1"><div className="flex items-center gap-1 text-xs font-bold text-primary"><span className="truncate">{name}</span>{featured && <BadgeCheck className="size-3 shrink-0 text-emerald-700" />}</div><div className="mt-0.5 flex flex-wrap items-center gap-2 text-[10px] text-muted-foreground"><span className="flex items-center gap-0.5 text-accent-foreground"><Star className="size-3 fill-current" /> {rating}</span><span>· {time} arrival</span></div><div className="mt-1 flex items-center gap-1 text-[10px] font-semibold text-emerald-700"><span className="size-1.5 rounded-full bg-emerald-600" /> {availability}</div></div><span className="text-xs font-bold text-primary">{price}</span></div>
 }
 
 function JobModal({ service, onClose }: { service: string; onClose: () => void }) {
